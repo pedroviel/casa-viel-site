@@ -64,14 +64,63 @@
       if (e.key === 'ArrowLeft') show(k - 1);
       if (e.key === 'ArrowRight') show(k + 1);
     });
-    let sx0 = 0;
-    lb.addEventListener('touchstart', e => sx0 = e.touches[0].clientX, { passive: true });
-    lb.addEventListener('touchend', e => { const d = e.changedTouches[0].clientX - sx0; if (Math.abs(d) > 50) show(k + (d < 0 ? 1 : -1)); });
+    // swipe só com 1 dedo: pinça (2+ dedos) ou imagem com zoom não troca de foto
+    let sx0 = 0, multi = false;
+    lb.addEventListener('touchstart', e => {
+      if (e.touches.length > 1) { multi = true; return; }
+      multi = false; sx0 = e.touches[0].clientX;
+    }, { passive: true });
+    lb.addEventListener('touchend', e => {
+      if (multi || e.touches.length > 0 || e.changedTouches.length !== 1) { if (e.touches.length === 0) multi = false; return; }
+      if (window.visualViewport && visualViewport.scale > 1.05) return;
+      const d = e.changedTouches[0].clientX - sx0;
+      if (Math.abs(d) > 50) show(k + (d < 0 ? 1 : -1));
+    });
     // portfólio (mosaico): clique abre a ampliação dentro do mesmo projeto
     $('.mosaic').forEach(m => m.addEventListener('click', e => {
       const im = e.target.closest('img'); if (!im) return;
       const imgs = $('img', m); window.openLb(imgs, imgs.indexOf(im));
     }));
+  }
+
+  // formulário: envio via fetch (sem sair da página) + trava de 24 h no navegador
+  const form = document.querySelector('form.f');
+  if (form) {
+    const KEY = 'cv_last_send', DAY = 24 * 60 * 60 * 1000;
+    const btn = form.querySelector('.send'), label = btn.querySelector('span');
+    const txt = label.textContent, msg = form.querySelector('.f-msg'), ok = document.querySelector('.f-ok');
+    const say = (t, type) => { msg.textContent = t || ''; msg.dataset.t = type || ''; };
+    const last = () => { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } };
+    const locked = () => Date.now() - last() < DAY;
+    const lockUi = () => { btn.disabled = true; say('Você já enviou uma mensagem recentemente. Aguarde nosso retorno.', 'note'); };
+    if (locked()) lockUi();
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (locked()) { lockUi(); return; }
+      const data = Object.fromEntries(new FormData(form));
+      if (!data['h-captcha-response']) { say('Por favor, preencha a verificação de segurança antes de enviar.', 'err'); return; }
+      btn.disabled = true; label.textContent = 'Enviando...'; say('');
+      try {
+        const r = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const j = await r.json().catch(() => ({}));
+        if (r.status !== 200 || j.success === false) throw new Error(j.message || '');
+        try { localStorage.setItem(KEY, Date.now()); } catch (e) {}
+        form.classList.add('out');
+        setTimeout(() => {
+          form.reset(); form.hidden = true; ok.hidden = false;
+          requestAnimationFrame(() => { ok.classList.add('in'); ok.focus({ preventScroll: true }); });
+        }, rm ? 0 : 520);
+      } catch (err) {
+        say(/captcha/i.test(err.message) ? 'Por favor, preencha a verificação de segurança antes de enviar.' : 'Não foi possível enviar agora. Tente novamente em instantes.', 'err');
+        if (window.hcaptcha) try { hcaptcha.reset(); } catch (e) {}
+        btn.disabled = false; label.textContent = txt;
+      }
+    });
   }
 
   // slider imersivo (home)

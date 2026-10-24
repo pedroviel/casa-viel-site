@@ -72,13 +72,12 @@
       <h2>Vamos desenhar a sua casa?</h2>
       <p>Conte um pouco sobre o espaço e o que você imagina. A primeira conversa é sem compromisso.</p>
     </div>
+    <div class="fwrap">
     <form class="f" action="https://api.web3forms.com/submit" method="POST">
       <!-- Chave gratuita em https://web3forms.com (informe o e-mail que vai receber as mensagens) -->
       <input type="hidden" name="access_key" value="636b3c5b-1203-4139-893b-cbfcbd4542bd">
       <input type="hidden" name="subject" value="Novo contato pelo site da Casa Viel">
       <input type="hidden" name="from_name" value="Site Casa Viel">
-      <!-- Página exibida após o envio. Troque pela sua URL, por exemplo https://casaviel.com.br/obrigado.html -->
-      <input type="hidden" name="redirect" value="https://web3forms.com/success">
       <!-- Campo invisível contra spam (honeypot) -->
       <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
       <label>Nome<input type="text" name="name" required minlength="2" autocomplete="name" placeholder="Seu nome completo"></label>
@@ -86,9 +85,17 @@
       <label>Telefone<input type="tel" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9()+\-\s]{8,}" placeholder="(00) 00000-0000"></label>
       <label>Mensagem<textarea name="message" rows="4" required minlength="10" placeholder="Conte sobre o espaço e o que você sonha para ele"></textarea></label>
       <!-- hCaptcha do Web3Forms: ative também no painel do Web3Forms -->
-      <div class="h-captcha" data-captcha="true"></div>
+      <div class="h-captcha" data-captcha="true" data-theme="dark"></div>
+      <!-- Avisos: erro de validação / limite de envios (preenchido pelo main.js) -->
+      <p class="f-msg" role="alert" aria-live="polite"></p>
       <button type="submit" class="send"><span>Enviar Mensagem</span></button>
     </form>
+    <!-- Sucesso: aparece no lugar do formulário depois do envio -->
+    <div class="f-ok" tabindex="-1" role="status" hidden>
+      <h3>Mensagem enviada</h3>
+      <p>Obrigado! Sua mensagem foi enviada com sucesso e a Isabela entrará em contato em breve.</p>
+    </div>
+  </div>
   </div>
   <footer>
     <a class="f-logo" href="index.html"><img src="assets/brand/logos/Logo_Horizontal_Claro.png" alt="Casa Viel, arquitetura de interiores"></a>
