@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sobre | Casa Viel</title>
+<meta name="description" content="Conheça Isabela Viel, arquiteta e urbanista, e o processo de trabalho da Casa Viel.">
+<meta name="theme-color" content="#F7F4EF">
+<meta property="og:title" content="Sobre | Casa Viel">
+<meta property="og:description" content="Conheça Isabela Viel, arquiteta e urbanista, e o processo de trabalho da Casa Viel.">
+<meta property="og:image" content="https://casaviel.com.br/assets/img/projeto_suite_quarto_bebe/suite-1.jpeg">
+<link rel="icon" href="assets/brand/logos/Simbolo_Claro.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/main.js" defer></script>
+</head>
+<body class="sobre">
+
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Casa Viel, página inicial"><img class="lg-e" src="assets/brand/logos/Logo_Horizontal_Espresso.png" alt="Casa Viel, arquitetura de interiores"><img class="lg-c" src="assets/brand/logos/Logo_Horizontal_Claro.png" alt="" aria-hidden="true"></a>
+  <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span class="t">Menu</span><i></i></button>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <nav aria-label="Principal">
+    <a class="m" style="--i:0" href="index.html">Início</a>
+    <a class="m" style="--i:1" href="projetos.html">Projetos</a>
+    <a class="m" style="--i:2" href="sobre.html" aria-current="page">Sobre</a>
+    <a class="m" style="--i:3" href="#contato">Contato</a>
+  </nav>
+  <p class="mq">Arquitetura que abriga e acolhe.</p>
+</div>
+
+<main>
+<section class="about">
+  <div class="frame rise"><div class="arch"><img src="assets/brand/isabela/perfil_linkedin.jpg" alt="Isabela Viel, arquiteta e urbanista"></div></div>
+  <div class="bio rise" style="--d:.3s">
+    <img class="sign" src="assets/brand/logos/Assinatura_Isabela_Viel_Espresso.png" alt="Isabela Viel, arquiteta de interiores">
+    <p class="lead">Arquiteta e urbanista formada pela UNIFOR e pós-graduanda em Arquitetura de Interiores.</p>
+    <p class="txt">Há mais de três anos desenvolvo projetos residenciais e comerciais, do moodboard ao projeto executivo, e criei a Casa Viel para levar esse cuidado a cada detalhe de uma casa. Gosto de ouvir com calma, explicar cada decisão com clareza e trabalhar junto com quem vai morar no espaço.</p>
+    <dl class="facts">
+      <div><dt>Formação</dt><dd>Arquitetura e Urbanismo, UNIFOR</dd></div>
+      <div><dt>Especialização</dt><dd>Pós-graduação em Arquitetura de Interiores (em andamento)</dd></div>
+      <div><dt>Prática</dt><dd>Mais de 3 anos em interiores residenciais e comerciais</dd></div>
+      <div><dt>Processo</dt><dd>Moodboard, modelagem 3D e projeto executivo em BIM</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="process" id="processo">
+  <h2>Como trabalhamos</h2>
+  <p class="intro">Um processo claro, do primeiro café à entrega da chave.</p>
+  <ol class="steps">
+    <li><b aria-hidden="true">1</b><h3>Conversa</h3><p>Rotina, sonhos e orçamento.</p></li>
+    <li><b aria-hidden="true">2</b><h3>Conceito</h3><p>Referências, materiais e primeiras ideias.</p></li>
+    <li><b aria-hidden="true">3</b><h3>Projeto</h3><p>Plantas, detalhes e imagens realistas.</p></li>
+    <li><b aria-hidden="true">4</b><h3>Obra</h3><p>Acompanhamento até a entrega.</p></li>
+  </ol>
+</section>
+</main>
+
+<!-- Contato + rodapé: igual em todas as páginas -->
+<section class="ct" id="contato">
+  <div class="grid">
+    <div>
+      <h2>Vamos desenhar a sua casa?</h2>
+      <p>Conte um pouco sobre o espaço e o que você imagina. A primeira conversa é sem compromisso.</p>
+    </div>
+    <form class="f" action="https://api.web3forms.com/submit" method="POST">
+      <!-- Chave gratuita em https://web3forms.com (informe o e-mail que vai receber as mensagens) -->
+      <input type="hidden" name="access_key" value="636b3c5b-1203-4139-893b-cbfcbd4542bd">
+      <input type="hidden" name="subject" value="Novo contato pelo site da Casa Viel">
+      <input type="hidden" name="from_name" value="Site Casa Viel">
+      <!-- Página exibida após o envio. Troque pela sua URL, por exemplo https://casaviel.com.br/obrigado.html -->
+      <input type="hidden" name="redirect" value="https://casaviel.com.br/obrigado.html">
+      <!-- Campo invisível contra spam (honeypot) -->
+      <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+      <label>Nome<input type="text" name="name" required minlength="2" autocomplete="name" placeholder="Seu nome completo"></label>
+      <label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@email.com"></label>
+      <label>Telefone<input type="tel" name="phone" required inputmode="tel" autocomplete="tel" pattern="[0-9()+\-\s]{8,}" placeholder="(00) 00000-0000"></label>
+      <label>Mensagem<textarea name="message" rows="4" required minlength="10" placeholder="Conte sobre o espaço e o que você sonha para ele"></textarea></label>
+      <!-- hCaptcha do Web3Forms: ative também no painel do Web3Forms -->
+      <div class="h-captcha" data-captcha="true"></div>
+      <button type="submit" class="send"><span>Enviar Mensagem</span></button>
+    </form>
+  </div>
+  <footer>
+    <a class="f-logo" href="index.html"><img src="assets/brand/logos/Logo_Horizontal_Claro.png" alt="Casa Viel, arquitetura de interiores"></a>
+    <nav class="f-links" aria-label="Rodapé"><a href="index.html">Início</a><a href="projetos.html">Projetos</a><a href="sobre.html">Sobre</a><a href="#contato">Contato</a></nav>
+    <a class="ig" href="https://instagram.com/casaviel.arq" target="_blank" rel="noopener" aria-label="Instagram da Casa Viel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.9"/><circle cx="17.3" cy="6.7" r=".7" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <small>© 2026 Casa Viel</small>
+  </footer>
+</section>
+<script src="https://web3forms.com/client/script.js" async defer></script>
+</body>
+</html>
