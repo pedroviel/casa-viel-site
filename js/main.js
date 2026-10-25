@@ -45,7 +45,22 @@
   let set = [], k = 0;
   if (lb) {
     const li = lb.querySelector('img'), cap = lb.querySelector('.cap');
+
+    // pinça no estilo Instagram: só a <img> escala; a interface fica travada
+    let d0 = 0, scale = 1, tx = 0, ty = 0, m0 = null, pinching = false, multi = false, sx0 = 0;
+    const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const mid = t => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
+    // animate=true: volta suave a scale(1); false: volta na hora (trocar de foto ou fechar)
+    const resetZoom = animate => {
+      pinching = false; scale = 1; tx = ty = 0;
+      li.classList.toggle('pz', !animate);
+      li.style.transform = 'scale(1)';
+      if (!animate) requestAnimationFrame(() => li.classList.remove('pz'));
+    };
+    const closeLb = () => { lb.classList.remove('open'); resetZoom(false); };
+
     const show = i => {
+      resetZoom(false);
       k = (i + set.length) % set.length;
       const im = set[k], fc = im.closest('figure').querySelector('figcaption');
       li.src = im.dataset.full || im.src; li.alt = im.alt;
@@ -54,28 +69,48 @@
     window.openLb = (imgs, i) => { set = imgs; show(i); lb.classList.add('open'); };
     lb.addEventListener('click', e => {
       const a = e.target.dataset.a;
-      if (a === 'x' || e.target === lb) lb.classList.remove('open');
+      if (a === 'x' || e.target === lb) closeLb();
       if (a === 'p') show(k - 1);
       if (a === 'n') show(k + 1);
     });
     addEventListener('keydown', e => {
       if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') lb.classList.remove('open');
+      if (e.key === 'Escape') closeLb();
       if (e.key === 'ArrowLeft') show(k - 1);
       if (e.key === 'ArrowRight') show(k + 1);
     });
-    // swipe só com 1 dedo: pinça (2+ dedos) ou imagem com zoom não troca de foto
-    let sx0 = 0, multi = false;
+
     lb.addEventListener('touchstart', e => {
+      if (e.touches.length === 2) {            // 2 dedos: começa a pinça
+        multi = true; pinching = true;
+        d0 = dist(e.touches); m0 = mid(e.touches);
+        const r = li.getBoundingClientRect();   // origem do zoom = ponto entre os dedos
+        li.style.transformOrigin = (m0.x - r.left) + 'px ' + (m0.y - r.top) + 'px';
+        li.classList.add('pz');                 // sem transição enquanto os dedos estão na tela
+        return;
+      }
       if (e.touches.length > 1) { multi = true; return; }
       multi = false; sx0 = e.touches[0].clientX;
     }, { passive: true });
+
+    lb.addEventListener('touchmove', e => {
+      if (!pinching || e.touches.length !== 2) return;
+      e.preventDefault();
+      scale = Math.min(4, Math.max(1, dist(e.touches) / d0));   // distância atual / inicial
+      const m = mid(e.touches);
+      tx = scale > 1 ? m.x - m0.x : 0; ty = scale > 1 ? m.y - m0.y : 0;
+      li.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    }, { passive: false });
+
     lb.addEventListener('touchend', e => {
+      if (pinching && e.touches.length < 2) resetZoom(true);   // soltou: volta suave a scale(1)
+      // swipe só com 1 dedo e sem ter havido pinça
       if (multi || e.touches.length > 0 || e.changedTouches.length !== 1) { if (e.touches.length === 0) multi = false; return; }
-      if (window.visualViewport && visualViewport.scale > 1.05) return;
       const d = e.changedTouches[0].clientX - sx0;
       if (Math.abs(d) > 50) show(k + (d < 0 ? 1 : -1));
     });
+    lb.addEventListener('touchcancel', () => { multi = false; resetZoom(true); });
+    lb.addEventListener('gesturestart', e => e.preventDefault());   // Safari iOS: bloqueia o zoom da página
     // portfólio (mosaico): clique abre a ampliação dentro do mesmo projeto
     $('.mosaic').forEach(m => m.addEventListener('click', e => {
       const im = e.target.closest('img'); if (!im) return;

@@ -140,8 +140,9 @@ button{font-family:inherit;touch-action:manipulation}
 /* ampliar imagem */
 .lb{position:fixed;inset:0;z-index:90;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(36,28,22,.97)}
 .lb.open{display:flex}
-.lb,.lb img{touch-action:pan-y pinch-zoom}
-.lb img{max-width:94vw;max-height:78vh;object-fit:contain}
+.lb{touch-action:none}
+.lb img{max-width:94vw;max-height:78vh;object-fit:contain;will-change:transform;transition:transform .2s ease-out;-webkit-user-drag:none;user-select:none}
+.lb img.pz{transition:none}
 .lb .cap{margin:0;max-width:60ch;padding:0 20px;text-align:center;color:var(--greige);font-size:15px;min-height:1.7em}
 .lb button{position:absolute;width:56px;height:56px;background:none;border:0;color:var(--offwhite);font-size:38px;line-height:1;cursor:pointer}
 .lb [data-a=x]{top:calc(env(safe-area-inset-top,0px) + 6px);right:8px}.lb [data-a=p]{left:4px;top:50%}.lb [data-a=n]{right:4px;top:50%}
