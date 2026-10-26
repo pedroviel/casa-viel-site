@@ -134,7 +134,7 @@
       e.preventDefault();
       if (locked()) { lockUi(); return; }
       const data = Object.fromEntries(new FormData(form));
-      if (!data['h-captcha-response']) { say('Por favor, preencha a verificação de segurança antes de enviar.', 'err'); return; }
+      // if (!data['h-captcha-response']) { say('Por favor, preencha a verificação de segurança antes de enviar.', 'err'); return; }
       btn.disabled = true; label.textContent = 'Enviando...'; say('');
       try {
         const r = await fetch(form.action, {
