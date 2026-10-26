@@ -118,41 +118,57 @@
     }));
   }
 
-  // formulário: envio via fetch (sem sair da página) + trava de 24 h no navegador
+  // formulário: segurança invisível (sem captcha) + envio via fetch
   const form = document.querySelector('form.f');
   if (form) {
-    const KEY = 'cv_last_send', DAY = 24 * 60 * 60 * 1000;
-    const btn = form.querySelector('.send'), label = btn.querySelector('span');
-    const txt = label.textContent, msg = form.querySelector('.f-msg'), ok = document.querySelector('.f-ok');
-    const say = (t, type) => { msg.textContent = t || ''; msg.dataset.t = type || ''; };
-    const last = () => { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } };
-    const locked = () => Date.now() - last() < DAY;
-    const lockUi = () => { btn.disabled = true; say('Você já enviou uma mensagem recentemente. Aguarde nosso retorno.', 'note'); };
-    if (locked()) lockUi();
+    const T0 = Date.now();                                   // hora em que a página carregou
+    const KEY = '_cv_xt0', DAY = 24 * 60 * 60 * 1000, MAX = 2, MIN_FILL = 8000;
+    const btn = form.querySelector('.send'), label = btn.querySelector('span'), txt = label.textContent;
+    const msg = form.querySelector('.f-msg'), ok = document.querySelector('.f-ok');
+
+    // histórico de envios: timestamps em base36 separados por ".", só os das últimas 24 h
+    const read = () => {
+      try { return (localStorage.getItem(KEY) || '').split('.').filter(Boolean).map(s => parseInt(s, 36)).filter(n => n > Date.now() - DAY); }
+      catch (e) { return []; }
+    };
+    const write = list => { try { localStorage.setItem(KEY, list.map(n => n.toString(36)).join('.')); } catch (e) {} };
+
+    // honeypot: o campo "botcheck" é invisível para pessoas; se vier marcado/preenchido, é robô
+    const trapped = () => {
+      const bc = form.elements['botcheck'];
+      return !!bc && (bc.type === 'checkbox' ? bc.checked : bc.value.trim() !== '');
+    };
+    // sucesso: o formulário some com fade e a mensagem aparece
+    const showOk = () => {
+      form.classList.add('out');
+      setTimeout(() => {
+        form.reset(); form.hidden = true; ok.hidden = false;
+        requestAnimationFrame(() => { ok.classList.add('in'); ok.focus({ preventScroll: true }); });
+      }, rm ? 0 : 520);
+    };
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
-      if (locked()) { lockUi(); return; }
-      const data = Object.fromEntries(new FormData(form));
-      // if (!data['h-captcha-response']) { say('Por favor, preencha a verificação de segurança antes de enviar.', 'err'); return; }
-      btn.disabled = true; label.textContent = 'Enviando...'; say('');
+      msg.textContent = '';
+      const bot = trapped() || (Date.now() - T0 < MIN_FILL);   // honeypot ou preenchido rápido demais
+      const limited = read().length >= MAX;                    // 2 envios a cada 24 h
+      btn.disabled = true; label.textContent = 'Enviando...';
+
+      // "fake success": não chama a API (poupa a cota), mas a interface finge que enviou
+      if (bot || limited) { setTimeout(showOk, 900 + Math.random() * 700); return; }
+
       try {
         const r = await fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(data)
+          body: JSON.stringify(Object.fromEntries(new FormData(form)))
         });
         const j = await r.json().catch(() => ({}));
         if (r.status !== 200 || j.success === false) throw new Error(j.message || '');
-        try { localStorage.setItem(KEY, Date.now()); } catch (e) {}
-        form.classList.add('out');
-        setTimeout(() => {
-          form.reset(); form.hidden = true; ok.hidden = false;
-          requestAnimationFrame(() => { ok.classList.add('in'); ok.focus({ preventScroll: true }); });
-        }, rm ? 0 : 520);
+        write(read().concat(Date.now()));
+        showOk();
       } catch (err) {
-        say(/captcha/i.test(err.message) ? 'Por favor, preencha a verificação de segurança antes de enviar.' : 'Não foi possível enviar agora. Tente novamente em instantes.', 'err');
-        if (window.hcaptcha) try { hcaptcha.reset(); } catch (e) {}
+        msg.textContent = 'Não foi possível enviar agora. Tente novamente em instantes.';
         btn.disabled = false; label.textContent = txt;
       }
     });

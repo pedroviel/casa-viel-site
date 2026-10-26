@@ -184,7 +184,6 @@ button{font-family:inherit;touch-action:manipulation}
 .f input:invalid:not(:placeholder-shown):not(:focus),.f textarea:invalid:not(:placeholder-shown):not(:focus){border-color:#c9937a}
 .f textarea{height:92px;resize:vertical}
 .f ::placeholder{color:#9b8d7f}
-.h-captcha{min-height:78px;max-width:100%;overflow:hidden}
 .send{justify-self:start;position:relative;overflow:hidden;min-height:56px;margin-top:4px;padding:0 40px;border:1px solid var(--areia);background:var(--areia);color:var(--espresso);font:500 16px var(--sans);cursor:pointer;transition:color .4s}
 .send::before{content:"";position:absolute;inset:0;background:var(--oliva);transform:translateX(-101%);transition:transform .5s cubic-bezier(.7,0,.2,1)}
 .send span{position:relative}
