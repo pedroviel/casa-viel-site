@@ -175,7 +175,7 @@ button{font-family:inherit;touch-action:manipulation}
 /* contato (formulário) + rodapé: em todas as páginas */
 .ct{background:var(--espresso);color:var(--areia);padding:clamp(150px,26vh,300px) var(--pad) 32px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,7vw,120px);align-items:start}
-.ct h2{margin-top:-.13em;font-size:clamp(42px,7vw,112px);line-height:.98} /* -.13em: sobe o recuo do line-height até o topo do "V" */
+.ct h2{margin-top:-.124em;font-size:clamp(42px,7vw,112px);line-height:.98} /* -.13em: sobe o recuo do line-height até o topo do "V" */
 .ct .grid p{margin:22px 0 0;max-width:30em;color:var(--greige);font-weight:400}
 .f{display:grid;gap:20px;align-content:start;margin-top:-5.5px} /* -5.5px: topo do rótulo NOME alinhado ao topo do "V" */
 .f label{display:grid;gap:2px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--greige)}
@@ -260,6 +260,22 @@ footer small{grid-column:1/-1;padding-top:8px;text-align:center;color:var(--grei
   .f-links{flex-wrap:wrap;justify-content:center}
   .ig{margin-top:8px}
   .mosaic figcaption{display:none}
+}
+/* menu em tela cheia: rolagem de segurança + centralização que não corta o topo */
+.menu{overflow-y:auto;overscroll-behavior:contain;justify-content:flex-start}
+.menu::before,.menu::after{content:"";margin-block:auto}
+
+/* telas baixas (notebooks 1366x768 e similares) */
+@media (max-height:800px) and (min-width:768px){
+  .menu{padding:clamp(80px,12vh,100px) var(--pad) clamp(20px,4vh,36px)}
+  .menu a.m{font-size:clamp(34px,10.5vh,82px);line-height:1.08;padding:2px 0}
+  .menu .mq{margin-top:clamp(12px,3.5vh,32px);font-size:clamp(.8rem,2vh,1rem)}
+  .ct{padding-top:clamp(110px,17vh,170px);padding-bottom:20px}
+  .ct h2{font-size:clamp(40px,min(6vw,10.5vh),88px)}
+  .f{gap:14px}
+  .f textarea{height:68px}
+  footer{margin-top:32px;padding-top:16px;gap:6px 24px}
+  footer small{padding-top:0}
 }
 @media(prefers-reduced-motion:reduce){
   .doors{display:none}*{animation:none!important;transition:none!important}.rise{opacity:1;transform:none}.big span{opacity:1}
